@@ -33,7 +33,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <locale.h>     // used for setlocale()
 #include <unistd.h>     // used for usleep()
+#include <time.h>       // used for srand()
 #include "life.h"
 
 const useconds_t SLEEP_USEC = 125000;
@@ -51,11 +53,26 @@ void seed_glider(char *grid) {
     set_cell(grid, cx+2, cy+2, ALIVE);
 }
 
+void seed_random(char *grid) {
+    float p = 0.35;
+    srand(time(NULL));
+    
+    for (int y = 0; y < ROWS; y++) {
+        for (int x = 0; x < COLS; x++) {
+            if ((rand()%100)/100.0 < p)
+                set_cell(grid, x, y, ALIVE);
+        }
+    }
+}
+
 /* Main function. */
 int main(void) {
     
     /* Make stdout unbuffered so ANSI codes apply immediately */
     setvbuf(stdout, NULL, _IONBF, 0);
+
+    /* Enabling UTF-8 encoding in the terminal. */
+    setlocale(LC_ALL, "");
 
     /* Sets grid size according to the terminal size. */
     get_terminal_inner_size(&ROWS, &COLS);
@@ -71,8 +88,9 @@ int main(void) {
     }
 
     setup_grid(old_grid, DEAD);
-    seed_glider(old_grid);
-
+    //seed_glider(old_grid);
+    seed_random(old_grid);
+    
     while (1) {
         clear_screen();
         print_grid(old_grid);

@@ -16,8 +16,14 @@ int ROWS = 25;
 int COLS = 50;
 
 /* Used characters for dead or alive cells. */
-const char DEAD  = ' ';
-const char ALIVE = '@';
+const char DEAD = 0;
+const char ALIVE = 1;
+const char *GLYPH_DEAD  = " ";
+const char *GLYPH_ALIVE = "█"; 
+
+/* Used characters for borders. */
+static const char *TL = "┌", *TR = "┐", *BL = "└", *BR = "┘";
+static const char *H  = "─", *V  = "│";
 
 /* Translates the specified coords into a valid array index so
    that we don't mistakenly access an index out of bounds.
@@ -82,22 +88,25 @@ void compute_new_state(char *old, char *new) {
    This will clear the terminal each time the function is
    called and will print the grid within a border. */
 void print_grid(char *grid) {
-    /* Top border. */
-    putchar('+');
-    for (int i = 0; i < COLS; i++) putchar('-');
-    puts("+");
+    const int cellw = 1;
+    
+    // Top border
+    printf("%s", TL);
+    for (int i = 0; i < COLS * cellw; i++) printf("%s", H);
+    printf("%s\n", TR);
 
-    /* Left and right border, with the grid between. */
+    // Rows
     for (int y = 0; y < ROWS; y++) {
-        putchar('|');
-        for (int x = 0; x < COLS; x++)
-            putchar(get_cell(grid, x, y));
-        puts("|");
+        printf("%s", V);  // left border
+        for (int x = 0; x < COLS; x++) {
+            char s = get_cell(grid, x, y);
+            printf("%s", (s == ALIVE) ? GLYPH_ALIVE : GLYPH_DEAD);
+        }
+        printf("%s\n", V); // right border
     }
 
-    /* Bottom border. */
-    putchar('+');
-    for (int i = 0; i < COLS; i++) putchar('-');
-    puts("+");
+    // Bottom border
+    printf("%s", BL);
+    for (int i = 0; i < COLS * cellw; i++) printf("%s", H);
+    printf("%s\n", BR);
 }
-

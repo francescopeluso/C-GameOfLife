@@ -34,11 +34,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>     // used for setlocale()
-#include <unistd.h>     // used for usleep()
-#include <time.h>       // used for srand()
+#include <time.h>       // used for time(), nanosleep()
 #include "life.h"
 
-const useconds_t SLEEP_USEC = 125000;
+/* Sleep interval 0.125s */
+const struct timespec SLEEP_NSEC = {
+	.tv_sec = 0,
+	.tv_nsec = 125000000L
+};
 
 /* Places a glider at 1/3 from the top-left corner of
    the grid, so that we can see how the cells behave
@@ -94,13 +97,13 @@ int main(void) {
     while (1) {
         clear_screen();
         print_grid(old_grid);
-        usleep(SLEEP_USEC);
+        nanosleep(&SLEEP_NSEC, NULL);
 
         compute_new_state(old_grid, new_grid);
         
         clear_screen();
         print_grid(new_grid);
-        usleep(SLEEP_USEC);
+        nanosleep(&SLEEP_NSEC, NULL);
 
         compute_new_state(new_grid, old_grid);
     }

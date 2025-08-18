@@ -1,5 +1,5 @@
 CC      := cc
-CFLAGS  := -std=c11 -O2 -Wall -Wextra
+CFLAGS  := -std=c11 -O2 -Wall -Wextra -Iinclude -D_POSIX_C_SOURCE=199309L
 INCLUDE := -Iinclude
 SRC     := src/main.c src/life.c src/term.c
 BIN     := life
